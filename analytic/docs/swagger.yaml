@@ -1,0 +1,123 @@
+basePath: /analytic/v1
+definitions:
+  models.Task:
+    properties:
+      status:
+        example: "false"
+        type: string
+      total_time:
+        example: 2221
+        type: integer
+      uuid:
+        example: eaca044f-5f02-4bc1-ba57-48845a473e42
+        type: string
+    type: object
+  models.TaskCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
+  models.TotalTimeTasksResponse:
+    properties:
+      tasks:
+        items:
+          $ref: '#/definitions/models.Task'
+        type: array
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  title: Analytic service
+  version: "1.0"
+paths:
+  /approved_tasks:
+    post:
+      description: Get count approved task.
+      operationId: ApprovedTasks
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TaskCountResponse'
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Get count approved task.
+      tags:
+      - approved_tasks
+  /declined_tasks:
+    post:
+      description: Get count declined task.
+      operationId: DeclinedTasks
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TaskCountResponse'
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Get count declined task.
+      tags:
+      - declined_tasks
+  /total_time_tasks:
+    post:
+      description: Total waiting time of reactions for each task.
+      operationId: TotalTimeTasks
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TotalTimeTasksResponse'
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Total waiting time of reactions for each task.
+      tags:
+      - total_time_tasks
+securityDefinitions:
+  access_token:
+    in: header
+    name: access_token
+    type: apiKey
+  refresh_token:
+    in: header
+    name: refresh_token
+    type: apiKey
+swagger: "2.0"

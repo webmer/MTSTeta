@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "./pkg/api";
+
+service Auth {
+  rpc VerifyToken(AuthRequest) returns (AuthResponse) {}
+}
+
+message AuthRequest {
+  string service = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+message Token {
+  string value = 1;
+  int64 expires = 2;
+}
+
+message AuthResponse {
+  bool result = 1;
+  string login = 2;
+  Token access_token = 3;
+  Token refresh_token = 4;
+}

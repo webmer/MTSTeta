@@ -1,0 +1,227 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Auth service",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/auth/v1",
+    "paths": {
+        "/create": {
+            "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Create user for db.",
+                "tags": [
+                    "create"
+                ],
+                "summary": "Create user for db.",
+                "operationId": "Create",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/i": {
+            "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Validate tokens and refresh tokens if refresh token is valid",
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Validate tokens",
+                "operationId": "Validate",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Validate credentials, return access and refresh tokens.",
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Generate auth tokens.",
+                "operationId": "Login",
+                "parameters": [
+                    {
+                        "description": "login",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Logout user, delete cookie tokens.",
+                "tags": [
+                    "logout"
+                ],
+                "summary": "Logout user.",
+                "operationId": "Logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.AuthRequest": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "access_token": {
+            "type": "apiKey",
+            "name": "access_token",
+            "in": "header"
+        },
+        "refresh_token": {
+            "type": "apiKey",
+            "name": "refresh_token",
+            "in": "header"
+        }
+    }
+}

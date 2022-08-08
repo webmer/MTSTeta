@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "./pkg/api";
+
+service Analytic {
+  rpc ActionTask(MessageRequest) returns (AnalyticResponse) {};
+}
+
+message MessageRequest {
+  string UUID = 1;
+  string UUIDMessage = 2;
+  int64 timestamp = 3;
+  string Type = 4;
+  string Value = 5;
+}
+
+message AnalyticResponse {
+
+}

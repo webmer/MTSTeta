@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    links:
+      - db
+    depends_on:
+      - db
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=mtsteta
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1111
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql

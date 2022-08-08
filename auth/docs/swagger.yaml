@@ -1,0 +1,144 @@
+basePath: /auth/v1
+definitions:
+  models.AuthRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  models.AuthResponse:
+    properties:
+      accessToken:
+        type: string
+      login:
+        type: string
+      refreshToken:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  title: Auth service
+  version: "1.0"
+paths:
+  /create:
+    post:
+      description: Create user for db.
+      operationId: Create
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "401":
+          description: unauthorized
+          schema:
+            type: string
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Create user for db.
+      tags:
+      - create
+  /i:
+    post:
+      description: Validate tokens and refresh tokens if refresh token is valid
+      operationId: Validate
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "401":
+          description: unauthorized
+          schema:
+            type: string
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Validate tokens
+      tags:
+      - auth
+  /login:
+    post:
+      description: Validate credentials, return access and refresh tokens.
+      operationId: Login
+      parameters:
+      - description: login
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      summary: Generate auth tokens.
+      tags:
+      - auth
+  /logout:
+    post:
+      description: Logout user, delete cookie tokens.
+      operationId: Logout
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "401":
+          description: unauthorized
+          schema:
+            type: string
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Logout user.
+      tags:
+      - logout
+securityDefinitions:
+  access_token:
+    in: header
+    name: access_token
+    type: apiKey
+  refresh_token:
+    in: header
+    name: refresh_token
+    type: apiKey
+swagger: "2.0"
