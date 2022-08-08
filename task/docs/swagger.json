@@ -1,0 +1,571 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Сервис для создания и согласования задач и последующей отправкой писем последовательно всем участвующим лицам.",
+        "title": "Сервис создания и согласования задач",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/task/v1",
+    "paths": {
+        "/tasks/": {
+            "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Получения списка задач пользователя",
+                "tags": [
+                    "Работа с сервисом создания и согласования задач"
+                ],
+                "summary": "Получение списка задач",
+                "operationId": "GetTasksList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiBadRequest"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiAuthFailed"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiInternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/run": {
+            "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Создание задачи согласования с последующей отправкой",
+                "tags": [
+                    "Работа с сервисом создания и согласования задач"
+                ],
+                "summary": "Создание задачи согласования",
+                "operationId": "RunTask",
+                "parameters": [
+                    {
+                        "description": "Run Task",
+                        "name": "RunTask",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RunTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiBadRequest"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiAuthFailed"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiInternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskID}": {
+            "put": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Внесение изменений в задачу согласования в части наименования и описания задачи",
+                "tags": [
+                    "Работа с сервисом создания и согласования задач"
+                ],
+                "summary": "Обновление задачи согласования",
+                "operationId": "UpdateTask",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Task ID",
+                        "name": "taskID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Task",
+                        "name": "UpdateTask",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusUpdated"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiBadRequest"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiAuthFailed"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiInternalServerError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Удаление созданной задачи (доступно для автора задачи)",
+                "tags": [
+                    "Работа с сервисом создания и согласования задач"
+                ],
+                "summary": "Удаление созданной задачи",
+                "operationId": "DeleteTask",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Task ID",
+                        "name": "taskID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusDeleted"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiBadRequest"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiAuthFailed"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiInternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskID}/approve/{approvalLogin}": {
+            "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Согласование задачи. В результате очередь согласования перейдет к следующему в списке согласующих, либо, в случае последнего этапа согласования, задача будет считаться выполненной.",
+                "tags": [
+                    "Работа с сервисом создания и согласования задач"
+                ],
+                "summary": "Согласование задачи",
+                "operationId": "ApproveTask",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Task ID",
+                        "name": "taskID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Approval Login",
+                        "name": "approvalLogin",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusApproved"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiBadRequest"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiAuthFailed"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiInternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskID}/decline/{approvalLogin}": {
+            "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    },
+                    {
+                        "refresh_token": []
+                    }
+                ],
+                "description": "Отклонение согласования задачи. В этом случае всем участникам поступит письмо с завершением задачи.",
+                "tags": [
+                    "Работа с сервисом создания и согласования задач"
+                ],
+                "summary": "Отклонение задачи",
+                "operationId": "DeclineTask",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Task ID",
+                        "name": "taskID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Approval Login",
+                        "name": "approvalLogin",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusDeclined"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiBadRequest"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiAuthFailed"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrApiInternalServerError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "errors.ErrApiAuthFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "authorization failed, wrong token"
+                }
+            }
+        },
+        "errors.ErrApiBadRequest": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "invalid json body"
+                }
+            }
+        },
+        "errors.ErrApiInternalServerError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "rpc error: code = Unavailable desc = connection error: desc = transport: Error while dialing dial tcp [::1]:4000: connectex: No connection could be made because the target machine actively refused it."
+                }
+            }
+        },
+        "errors.ErrApiNotFound": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "task id or approval login not found. please check variables"
+                }
+            }
+        },
+        "http.StatusApproved": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "approved"
+                }
+            }
+        },
+        "http.StatusDeclined": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "declined"
+                }
+            }
+        },
+        "http.StatusDeleted": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "deleted"
+                }
+            }
+        },
+        "http.StatusUpdated": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "updated"
+                }
+            }
+        },
+        "models.Approval": {
+            "type": "object",
+            "properties": {
+                "approvalLogin": {
+                    "type": "string",
+                    "example": "test626"
+                },
+                "approved": {
+                    "description": "Approved      bool   `json:\"approved\"`\nSent          bool   `json:\"sent\"`",
+                    "$ref": "#/definitions/sql.NullBool"
+                },
+                "n": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "sent": {
+                    "$ref": "#/definitions/sql.NullBool"
+                }
+            }
+        },
+        "models.RunTask": {
+            "type": "object",
+            "properties": {
+                "approvalLogins": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "test626",
+                        "zxcvb"
+                    ]
+                },
+                "initiatorLogin": {
+                    "type": "string",
+                    "example": "test123"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test task"
+                },
+                "text": {
+                    "type": "string",
+                    "example": "this is test task 1"
+                }
+            }
+        },
+        "models.Task": {
+            "type": "object",
+            "properties": {
+                "approvals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Approval"
+                    }
+                },
+                "initiatorLogin": {
+                    "type": "string",
+                    "example": "test123"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test task"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "created"
+                },
+                "text": {
+                    "type": "string",
+                    "example": "this is test task"
+                },
+                "uuid": {
+                    "type": "string",
+                    "example": "eaca044f-5f02-4bc1-ba57-48845a473e42"
+                }
+            }
+        },
+        "models.UpdateTask": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "test task"
+                },
+                "text": {
+                    "type": "string",
+                    "example": "this is test task 1"
+                }
+            }
+        },
+        "sql.NullBool": {
+            "type": "object",
+            "properties": {
+                "bool": {
+                    "type": "boolean"
+                },
+                "valid": {
+                    "description": "Valid is true if Bool is not NULL",
+                    "type": "boolean"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "access_token": {
+            "type": "apiKey",
+            "name": "access_token",
+            "in": "header"
+        },
+        "refresh_token": {
+            "type": "apiKey",
+            "name": "refresh_token",
+            "in": "header"
+        }
+    }
+}

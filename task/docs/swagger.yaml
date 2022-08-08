@@ -1,0 +1,383 @@
+basePath: /task/v1
+definitions:
+  errors.ErrApiAuthFailed:
+    properties:
+      error:
+        example: authorization failed, wrong token
+        type: string
+    type: object
+  errors.ErrApiBadRequest:
+    properties:
+      error:
+        example: invalid json body
+        type: string
+    type: object
+  errors.ErrApiInternalServerError:
+    properties:
+      error:
+        example: 'rpc error: code = Unavailable desc = connection error: desc = transport:
+          Error while dialing dial tcp [::1]:4000: connectex: No connection could
+          be made because the target machine actively refused it.'
+        type: string
+    type: object
+  errors.ErrApiNotFound:
+    properties:
+      error:
+        example: task id or approval login not found. please check variables
+        type: string
+    type: object
+  http.StatusApproved:
+    properties:
+      status:
+        example: approved
+        type: string
+    type: object
+  http.StatusDeclined:
+    properties:
+      status:
+        example: declined
+        type: string
+    type: object
+  http.StatusDeleted:
+    properties:
+      status:
+        example: deleted
+        type: string
+    type: object
+  http.StatusUpdated:
+    properties:
+      status:
+        example: updated
+        type: string
+    type: object
+  models.Approval:
+    properties:
+      approvalLogin:
+        example: test626
+        type: string
+      approved:
+        $ref: '#/definitions/sql.NullBool'
+        description: |-
+          Approved      bool   `json:"approved"`
+          Sent          bool   `json:"sent"`
+      "n":
+        example: 2
+        type: integer
+      sent:
+        $ref: '#/definitions/sql.NullBool'
+    type: object
+  models.RunTask:
+    properties:
+      approvalLogins:
+        example:
+        - test626
+        - zxcvb
+        items:
+          type: string
+        type: array
+      initiatorLogin:
+        example: test123
+        type: string
+      name:
+        example: test task
+        type: string
+      text:
+        example: this is test task 1
+        type: string
+    type: object
+  models.Task:
+    properties:
+      approvals:
+        items:
+          $ref: '#/definitions/models.Approval'
+        type: array
+      initiatorLogin:
+        example: test123
+        type: string
+      name:
+        example: test task
+        type: string
+      status:
+        example: created
+        type: string
+      text:
+        example: this is test task
+        type: string
+      uuid:
+        example: eaca044f-5f02-4bc1-ba57-48845a473e42
+        type: string
+    type: object
+  models.UpdateTask:
+    properties:
+      name:
+        example: test task
+        type: string
+      text:
+        example: this is test task 1
+        type: string
+    type: object
+  sql.NullBool:
+    properties:
+      bool:
+        type: boolean
+      valid:
+        description: Valid is true if Bool is not NULL
+        type: boolean
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Сервис для создания и согласования задач и последующей отправкой писем
+    последовательно всем участвующим лицам.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Сервис создания и согласования задач
+  version: "1.0"
+paths:
+  /tasks/:
+    get:
+      description: Получения списка задач пользователя
+      operationId: GetTasksList
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrApiBadRequest'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrApiAuthFailed'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrApiInternalServerError'
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Получение списка задач
+      tags:
+      - Работа с сервисом создания и согласования задач
+  /tasks/{taskID}:
+    delete:
+      description: Удаление созданной задачи (доступно для автора задачи)
+      operationId: DeleteTask
+      parameters:
+      - description: Task ID
+        format: uuid
+        in: path
+        name: taskID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.StatusDeleted'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrApiBadRequest'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrApiAuthFailed'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrApiNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrApiInternalServerError'
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Удаление созданной задачи
+      tags:
+      - Работа с сервисом создания и согласования задач
+    put:
+      description: Внесение изменений в задачу согласования в части наименования и
+        описания задачи
+      operationId: UpdateTask
+      parameters:
+      - description: Task ID
+        format: uuid
+        in: path
+        name: taskID
+        required: true
+        type: string
+      - description: Update Task
+        in: body
+        name: UpdateTask
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateTask'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.StatusUpdated'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrApiBadRequest'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrApiAuthFailed'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrApiNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrApiInternalServerError'
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Обновление задачи согласования
+      tags:
+      - Работа с сервисом создания и согласования задач
+  /tasks/{taskID}/approve/{approvalLogin}:
+    post:
+      description: Согласование задачи. В результате очередь согласования перейдет
+        к следующему в списке согласующих, либо, в случае последнего этапа согласования,
+        задача будет считаться выполненной.
+      operationId: ApproveTask
+      parameters:
+      - description: Task ID
+        format: uuid
+        in: path
+        name: taskID
+        required: true
+        type: string
+      - description: Approval Login
+        in: path
+        name: approvalLogin
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.StatusApproved'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrApiBadRequest'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrApiAuthFailed'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrApiNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrApiInternalServerError'
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Согласование задачи
+      tags:
+      - Работа с сервисом создания и согласования задач
+  /tasks/{taskID}/decline/{approvalLogin}:
+    post:
+      description: Отклонение согласования задачи. В этом случае всем участникам поступит
+        письмо с завершением задачи.
+      operationId: DeclineTask
+      parameters:
+      - description: Task ID
+        format: uuid
+        in: path
+        name: taskID
+        required: true
+        type: string
+      - description: Approval Login
+        in: path
+        name: approvalLogin
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.StatusDeclined'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrApiBadRequest'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrApiAuthFailed'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrApiNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrApiInternalServerError'
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Отклонение задачи
+      tags:
+      - Работа с сервисом создания и согласования задач
+  /tasks/run:
+    post:
+      description: Создание задачи согласования с последующей отправкой
+      operationId: RunTask
+      parameters:
+      - description: Run Task
+        in: body
+        name: RunTask
+        required: true
+        schema:
+          $ref: '#/definitions/models.RunTask'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrApiBadRequest'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrApiAuthFailed'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrApiInternalServerError'
+      security:
+      - access_token: []
+      - refresh_token: []
+      summary: Создание задачи согласования
+      tags:
+      - Работа с сервисом создания и согласования задач
+securityDefinitions:
+  access_token:
+    in: header
+    name: access_token
+    type: apiKey
+  refresh_token:
+    in: header
+    name: refresh_token
+    type: apiKey
+swagger: "2.0"
